@@ -16,7 +16,7 @@ import jwtDecode from "jwt-decode";
 
 //material-ui
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import createMuiTheme from "@material-ui/core/styles/createTheme";
 
 //theme
 import themeFile from "./util/theme";

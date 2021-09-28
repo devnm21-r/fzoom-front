@@ -81,9 +81,7 @@ export const getUserData = () => (dispatch) => {
 };
 
 export const signupSeller = (newSellerData, history) => (dispatch) => {
-  const location = `+${newSellerData.get("aptName")},+${newSellerData.get(
-    "locality"
-  )},+${newSellerData.get("street")},+${newSellerData.get("zip")}`;
+  const location = `+${newSellerData.aptName},+${newSellerData.locality},+${newSellerData.street},+${newSellerData.zip}`;
   axiosNewInstance
     .get("https://maps.googleapis.com/maps/api/geocode/json", {
       params: {
@@ -99,9 +97,9 @@ export const signupSeller = (newSellerData, history) => (dispatch) => {
         const formattedAddress = result.data.results[0].formatted_address;
         const lat = result.data.results[0].geometry.location.lat;
         const lng = result.data.results[0].geometry.location.lng;
-        newSellerData.append("lat", lat);
-        newSellerData.append("lng", lng);
-        newSellerData.append("formattedAddress", formattedAddress);
+        newSellerData["lat"] = lat;
+        newSellerData["lng"] = lng;
+        newSellerData["formattedAddress"] = formattedAddress;
       }
 
       dispatch(signupSellerFinal(newSellerData, history));

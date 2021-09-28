@@ -53,8 +53,8 @@ export default function SellerDashboard() {
     price: "",
   });
 
-  const handleFileSelect = (event) => {
-    setImage(event.target.files[0]);
+  const handleFileSelect = (imgPath) => {
+    setImage(imgPath);
   };
 
   const handleOpen = () => {
@@ -70,12 +70,10 @@ export default function SellerDashboard() {
   };
 
   const handleSubmit = () => {
-    const itemData = new FormData();
-    itemData.append("image", image);
-    itemData.append("title", inputs.title);
-    itemData.append("description", inputs.description);
-    itemData.append("price", inputs.price);
-    dispatch(addItem(itemData)); // eslint-disable-next-line
+    dispatch(addItem({
+      ...inputs,
+      image,
+    }));
     handleClose();
   };
 

@@ -48,11 +48,7 @@ function SwipeableImages(props) {
   const imagesArray = props.images;
   let newImagesArray;
   let maxSteps;
-  newImagesArray = imagesArray.map((image) => {
-    const imageUrlSplit = image.split("\\");
-    const imageUrl = imageUrlSplit[0] + "/" + imageUrlSplit[1];
-    return `${process.env.REACT_APP_SERVER_URL}/${imageUrl}`;
-  });
+  newImagesArray = imagesArray
   maxSteps = newImagesArray.length;
 
   const handleNext = () => {

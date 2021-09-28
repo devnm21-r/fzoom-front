@@ -1,4 +1,4 @@
-# foodHub-frontend
+# fzoom-frontend
 Front-end for food delivery application created using reactjs along with redux and Material-UI
 
 ## Getting started

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useHistory } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -10,6 +10,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { storage } from '../services/firebase';
 
 //custom-hook
 import useForm from "../hooks/forms";
@@ -92,25 +93,7 @@ export default function AddRestaurant() {
   }
 
   const signupSellerHandle = (props) => {
-    const formData = new FormData();
-    for (let i = 0; i < images.length; i++) {
-      formData.append("images", images[i]);
-    }
-    formData.append("name", inputs.name);
-    formData.append("email", inputs.email);
-    formData.append("tags", inputs.tags);
-    formData.append("costForOne", inputs.costForOne);
-    formData.append("minOrderAmount", inputs.minOrderAmount);
-    formData.append("street", inputs.street);
-    formData.append("aptName", inputs.aptName);
-    formData.append("locality", inputs.locality);
-    formData.append("zip", inputs.zip);
-    formData.append("phoneNo", inputs.phoneNo);
-    formData.append("password", inputs.password);
-    formData.append("confirmPassword", inputs.confirmPassword);
-    formData.append("payment", inputs.payment);
-    formData.append("role", "ROLE_SELLER");
-    dispatch(signupSeller(formData, history));
+    dispatch(signupSeller(inputs, history));
   };
 
   const { inputs, handleInputChange, handleSubmit } = useForm(
@@ -131,6 +114,7 @@ export default function AddRestaurant() {
     },
     signupSellerHandle
   );
+  const fileInput = useRef(null);
 
   return (
     <div className={classes.root}>
@@ -177,7 +161,7 @@ export default function AddRestaurant() {
                     onChange={handleInputChange}
                     value={inputs.email}
                     helperText={emailError}
-                    error={emailError ? true : false}
+                    error={emailError}
                     fullWidth
                     required
                   />
@@ -314,13 +298,22 @@ export default function AddRestaurant() {
                     Upload Images:
                   </Typography>
                   <input
-                    accept="image/*"
-                    className={classes.uploadImages}
-                    // style={{ display: "none" }}
-                    id="raised-button-file"
-                    multiple
+                    ref={fileInput}
                     type="file"
-                    onChange={handleFileSelect}
+                    accept="image/*"
+                    onChange={async function () {
+                      // @ts-ignore
+                      for (const file of fileInput?.current?.files) {
+                      const ref = await storage.child(`images/${new Date().getTime()}.jpg`).put(file);
+                      const event = { target: { name: 'image', value: await storage.child(ref.ref.fullPath).getDownloadURL()  } };
+                        console.log({ event })
+                        handleInputChange(event);
+                      }
+                    }}
+                    id={'input-image'}
+                    onClick={() => {
+                      console.log('onClick');
+                    }}
                   />
                   {imageError && (
                     <Typography

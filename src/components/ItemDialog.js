@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import { useSelector } from "react-redux";
 
 import Typography from "@material-ui/core/Typography";
@@ -9,6 +9,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import {storage} from '../services/firebase';
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreadThis,
@@ -53,6 +54,7 @@ export default function SellerDashboard(props) {
       if (error.msg.includes("Price cannot")) priceError = error.msg;
     }
   }
+  const fileInput = useRef(null);
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
@@ -101,11 +103,21 @@ export default function SellerDashboard(props) {
             Select an Image:
           </Typography>
           <input
-            accept="image/*"
-            className={classes.uploadImages}
-            id="raised-button-file"
+            ref={fileInput}
             type="file"
-            onChange={handleFileSelect}
+            className={classes.uploadImages}
+            accept="image/*"
+            onChange={async function () {
+              // @ts-ignore
+              for (const file of fileInput?.current?.files) {
+                const ref = await storage.child(`item-images/${new Date().getTime()}.jpg`).put(file);
+                handleFileSelect(await storage.child(ref.ref.fullPath).getDownloadURL() )
+              }
+            }}
+            id={'input-image'}
+            onClick={() => {
+              console.log('onClick');
+            }}
           />
           {imageError && (
             <Typography

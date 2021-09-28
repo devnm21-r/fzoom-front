@@ -80,6 +80,7 @@ const Cart = (props) => {
       locality: inputs.locality,
       zip: inputs.zip,
       phoneNo: inputs.phoneNo,
+      dateTime: inputs.dateTime
     };
     dispatch(fetchAddress(userData, history));
   };
@@ -243,6 +244,17 @@ const Cart = (props) => {
                       value={inputs.phoneNo}
                       helperText={phoneNoError}
                       error={phoneNoError ? true : false}
+                      fullWidth
+                      required
+                    />
+                    <TextField
+                      id="dateTime"
+                      name="dateTime"
+                      label="Date and Time of Dine-in"
+                      className={classes.textField}
+                      type="datetime-local"
+                      onChange={handleInputChange}
+                      value={inputs.dateTime}
                       fullWidth
                       required
                     />

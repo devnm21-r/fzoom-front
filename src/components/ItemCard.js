@@ -54,8 +54,6 @@ function Alert(props) {
 export default function ItemCard(props) {
   const classes = useStyles();
   const { title, imageUrl, description, price, _id } = props;
-  const imageUrlSplit = imageUrl.split("\\");
-  const finalImageUrl = `${process.env.REACT_APP_SERVER_URL}/${imageUrlSplit[0]}/${imageUrlSplit[1]}`; //3002 - server port
 
   const dispatch = useDispatch();
 
@@ -74,8 +72,8 @@ export default function ItemCard(props) {
     price: "",
   });
 
-  const handleFileSelect = (event) => {
-    setImage(event.target.files[0]);
+  const handleFileSelect = (imgPath) => {
+    setImage(imgPath);
   };
 
   const handleClose = () => {
@@ -87,13 +85,10 @@ export default function ItemCard(props) {
   };
 
   const handleSubmit = () => {
-    const itemData = new FormData();
-    if (image !== null) itemData.append("image", image);
-    else itemData.append("image", imageUrl);
-    itemData.append("title", inputs.title);
-    itemData.append("description", inputs.description);
-    itemData.append("price", inputs.price);
-    dispatch(editItem(itemData, _id)); // eslint-disable-next-line
+    dispatch(editItem({
+      ...inputs,
+      image,
+    }, _id)); // eslint-disable-next-line
     handleClose();
   };
 
@@ -188,7 +183,7 @@ export default function ItemCard(props) {
         </div>
         <CardMedia
           className={classes.cover}
-          image={finalImageUrl}
+          image={imageUrl}
           title="Item order"
         />
       </Card>

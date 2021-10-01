@@ -203,56 +203,6 @@ export const removeCartItem = (itemID) => (dispatch) => {
       console.log(err.response);
     });
 };
-
-export const fetchAddress = (userData, history) => (dispatch) => {
-  const location = `+${userData.aptName},+${userData.locality},+${userData.street},+${userData.zip}`;
-  axiosNewInstance
-    .get("https://maps.googleapis.com/maps/api/geocode/json", {
-      params: {
-        address: location,
-        key: process.env.REACT_APP_GOOGLE_API_KEY,
-      },
-    })
-    .then((result) => {
-      const formattedAddress = result.data.results[0].formatted_address;
-      console.log(formattedAddress);
-      const lat = result.data.results[0].geometry.location.lat;
-      const lng = result.data.results[0].geometry.location.lng;
-      userData.lat = lat;
-      userData.lng = lng;
-      userData.formattedAddress = formattedAddress;
-      dispatch(addAddress(userData, history));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-export const addAddress = (userData, history) => (dispatch) => {
-  console.log(userData.formattedAddress);
-  axios
-    .post("/user/address", userData)
-    .then((res) => {
-      // console.log(res.data);
-      dispatch(getUserData());
-      dispatch({ type: CLEAR_ERRORS });
-      dispatch(placeOrder({ dateTime: userData.dateTime }, history));
-    })
-    .catch((err) => {
-      console.log(err.response);
-      if (err.response) {
-        dispatch({
-          type: SET_ERRORS,
-          payload: err.response.data,
-        });
-      } else {
-        dispatch({
-          type: SERVER_ERROR,
-        });
-      }
-    });
-};
-
 export const placeOrder = (data, history) => (dispatch) => {
   axios
     .post("/order", data)

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { useDispatch } from "react-redux";
 
 //m-ui
@@ -13,6 +13,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import SummaryExpansion from "./FilterExpansion";
 import { changeOrderStatus } from "../redux/actions/dataActions";
+import StarRatingComponent from 'react-star-rating-component';
+import TextField from "@material-ui/core/TextField";
+
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreadThis,
@@ -72,6 +75,8 @@ const OrderCard = (props) => {
   const classes = useStyles();
   dayjs.extend(relativeTime);
   const dispatch = useDispatch();
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState('');
 
   const handleCancel = () => {
     const body = {
@@ -100,6 +105,15 @@ const OrderCard = (props) => {
     };
     dispatch(changeOrderStatus(order._id, body));
   };
+  
+  const handleRatingAndReview = () => {
+    const body = {
+      status: "Rated",
+      rating,
+      review,
+    };
+    dispatch(changeOrderStatus(order._id, body));
+  };
 
   return (
     <Paper
@@ -124,26 +138,34 @@ const OrderCard = (props) => {
             Call - +91 {order.seller.phone}
           </Typography>
         )}
-
-        {role === "ROLE_SELLER" && (
-          <Typography gutterBottom variant="body1" color="textPrimary">
-            Address -{" "}
+        {
+          role === 'ROLE_SELLER' &&  <>
+            <Typography gutterBottom variant="body1" color="textPrimary">
+              Order Type: {order.orderType || 'Now'}
+            </Typography>
             {
-              order.user.address.aptName + ", " + order.user.address.locality
-              // (`${order.user.address.aptName}, ${order.user.address.locality}`,
-              // `${order.user.address.street}`)
+              order.orderType === 'later' && <>
+                <Typography gutterBottom variant="body1" color="textPrimary">
+                    Table reserved for {order.reservedFor}
+                </Typography>
+                <Typography gutterBottom variant="body1" color="textPrimary">
+                  To be delivered by - {`${dayjs(order.dateTime).fromNow()} (${new Date(order.dateTime).toLocaleString()})`}
+                </Typography>
+              </>
             }
-          </Typography>
-        )}
+
+          </>
+        }
         <div style={{ margin: "10px 20px 10px 0px" }}>
           <SummaryExpansion condition="Orders" items={order.items} />
         </div>
         <Typography gutterBottom variant="body1" color="textPrimary">
           Ordered - {dayjs(order.createdAt).fromNow()}
         </Typography>
-        <Typography gutterBottom variant="body1" color="textPrimary">
+        {
+          role === 'ROLE_USER' && <Typography gutterBottom variant="body1" color="textPrimary">
           To be delivered by - {`${dayjs(order.dateTime).fromNow()} (${new Date(order.dateTime).toLocaleString()})`}
-        </Typography>
+        </Typography>}
         <div style={{ display: "flex", flexDirection: "row" }}>
           <FiberManualRecordIcon
             disabled
@@ -169,10 +191,10 @@ const OrderCard = (props) => {
             <div style={{ display: "inline-block" }}>
               <Button className={classes.buttonCancel} onClick={handleCancel}>
                 Cancel Order
-              </Button>
-              <Button className={classes.buttonAccept} onClick={handleAccept}>
-                Accept Order
-              </Button>
+                </Button>
+                <Button className={classes.buttonAccept} onClick={handleAccept}>
+                  Accept Order
+                </Button>
             </div>
           </>
         )}
@@ -186,6 +208,69 @@ const OrderCard = (props) => {
             Order Completed
           </Button>
         )}
+        {
+          role === 'ROLE_USER' && order.status === 'Completed' &&
+            <>
+            <Typography
+              variant="body2"
+              component="p"
+              style={{ margin: "10px 10px 2px 10px" }}
+            >
+              Please rate the order!
+            </Typography>
+              <div style={{ margin: "10px 10px 2px 10px" }}>
+          <StarRatingComponent
+            name="rate1"
+            starCount={5}
+            onStarClick={(rate) => setRating(rate)}
+          />
+              </div>
+          <br/>
+          Feedback (if any)
+              <br/>
+              <TextField
+                id="review"
+                name="feedback"
+                label="Feedback"
+                className={classes.textField}
+                type='text'
+                onChange={e => setReview(e.target.value)}
+                value={review}
+                fullWidth
+              />
+              <Button className={classes.buttonAccept} onClick={handleRatingAndReview}>
+                submit
+              </Button>
+          </>
+        }
+        {
+          order.status === 'Rated' && <>
+            <Typography
+              variant="body2"
+              component="p"
+              style={{ margin: "10px 10px 2px 10px" }}
+            >
+              {role === 'ROLE_USER' ? 'You have rated this order': `You've got a rating on the order!`}
+            </Typography>
+            <div style={{ margin: "10px 10px 2px 10px" }}>
+              <StarRatingComponent
+                name="rate1"
+                editing={false}
+                starCount={5}
+                value={order.rating}
+                onStarClick={(rate) => setRating(rate)}
+              />
+            </div>
+            <Typography
+              variant="body2"
+              component="p"
+              style={{ margin: "10px 10px 2px 10px" }}
+            >
+             Feedback: <br/>
+              {order.review}
+            </Typography>
+          </>
+        }
         <br />
       </div>
     </Paper>

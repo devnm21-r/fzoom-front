@@ -46,8 +46,7 @@ export default function CartItem(props) {
     quantity,
     itemId: { title, price, description, imageUrl, _id },
   } = props;
-  const imageUrlSplit = imageUrl.split("\\");
-  const finalImageUrl = `${process.env.REACT_APP_SERVER_URL}/${imageUrlSplit[0]}/${imageUrlSplit[1]}`;
+  const finalImageUrl = imageUrl;
 
   const dispatch = useDispatch();
 

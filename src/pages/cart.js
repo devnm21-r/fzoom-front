@@ -3,7 +3,7 @@ import { useHistory } from "react-router";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { getCart, fetchAddress } from "../redux/actions/dataActions";
+import { getCart, placeOrder } from "../redux/actions/dataActions";
 import Spinner from "../util/spinner/spinner";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -18,6 +18,7 @@ import MyButton from "../util/MyButton";
 import useForm from "../hooks/forms";
 
 import CartItem from "../components/CartItem";
+import {Label} from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreadThis,
@@ -75,47 +76,17 @@ const Cart = (props) => {
 
   const handlePlaceOrder = () => {
     const userData = {
-      street: inputs.street,
-      aptName: inputs.aptName,
-      locality: inputs.locality,
-      zip: inputs.zip,
+      reservedFor: inputs.reservedFor,
       phoneNo: inputs.phoneNo,
-      dateTime: inputs.dateTime
+      dateTime: inputs.dateTime,
+      orderType: inputs.orderType,
     };
-    dispatch(fetchAddress(userData, history));
+    console.log({ userData })
+    dispatch(placeOrder(userData, history));
   };
 
   const { inputs, handleInputChange } = useForm({
-    street:
-      props.location.state.address != null &&
-      // eslint-disable-next-line
-      props.location.state.address != undefined
-        ? props.location.state.address.street
-        : "",
-    locality:
-      props.location.state.address != null &&
-      // eslint-disable-next-line
-      props.location.state.address != undefined
-        ? props.location.state.address.locality
-        : "",
-    aptName:
-      props.location.state.address != null &&
-      // eslint-disable-next-line
-      props.location.state.address != undefined
-        ? props.location.state.address.aptName
-        : "",
-    zip:
-      props.location.state.address != null &&
-      // eslint-disable-next-line
-      props.location.state.address != undefined
-        ? props.location.state.address.zip
-        : "",
-    phoneNo:
-      props.location.state.address != null &&
-      // eslint-disable-next-line
-      props.location.state.address != undefined
-        ? props.location.state.address.phoneNo
-        : "",
+    orderType: 'later',
   });
 
   useEffect(() => {
@@ -182,83 +153,76 @@ const Cart = (props) => {
                     component="p"
                     style={{ margin: "10px 10px 2px 10px" }}
                   >
-                    Address:
+                    Details:
                   </Typography>
+                  <TextField
+                    id="phoneNo"
+                    name="phoneNo"
+                    label="Contact Number"
+                    className={classes.textField}
+                    type="number"
+                    onChange={handleInputChange}
+                    value={inputs.phoneNo}
+                    helperText={phoneNoError}
+                    error={phoneNoError ? true : false}
+                    fullWidth
+                    required
+                  />
                   <div className={classes.address}>
-                    <TextField
-                      id="aptName"
-                      name="aptName"
-                      label="Flat/Apartment Name"
-                      className={classes.textField}
-                      onChange={handleInputChange}
-                      value={inputs.aptName}
-                      helperText={aptError}
-                      error={aptError ? true : false}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      id="locality"
-                      name="locality"
-                      label="Locality"
-                      className={classes.textField}
-                      onChange={handleInputChange}
-                      value={inputs.locality}
-                      helperText={localityError}
-                      error={localityError ? true : false}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      id="street"
-                      name="street"
-                      label="Street"
-                      className={classes.textField}
-                      onChange={handleInputChange}
-                      value={inputs.street}
-                      helperText={streetError}
-                      error={streetError ? true : false}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      id="zipCode"
-                      name="zip"
-                      label="Zip Code"
-                      className={classes.textField}
-                      onChange={handleInputChange}
-                      value={inputs.zip}
-                      helperText={zipError}
-                      error={zipError ? true : false}
-                      type="number"
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      id="phoneNo"
-                      name="phoneNo"
-                      label="Contact Number"
-                      className={classes.textField}
-                      type="number"
-                      onChange={handleInputChange}
-                      value={inputs.phoneNo}
-                      helperText={phoneNoError}
-                      error={phoneNoError ? true : false}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      id="dateTime"
-                      name="dateTime"
-                      label="Date and Time of Dine-in"
-                      className={classes.textField}
-                      type="datetime-local"
-                      onChange={handleInputChange}
-                      value={inputs.dateTime}
-                      fullWidth
-                      required
-                    />
+                    <label>
+                      Order Now
+                      <input
+                        name="orderType"
+                        className={classes.textField}
+                        onChange={handleInputChange}
+                        value={'now'}
+                        required
+                        type={'radio'}
+                      />
+                    </label>
+<label>
+  Order Later
+  <input
+    name="orderType"
+    className={classes.textField}
+    onChange={handleInputChange}
+    value={'later'}
+    required
+    defaultChecked={true}
+    type={'radio'}
+  />
+</label>
+
                   </div>
+  
+                  {
+                      inputs.orderType === 'later' &&
+                        <>
+                      <TextField
+                        id="reservedFor"
+                        name="reservedFor"
+                        label="Table Reservation for"
+                        className={classes.textField}
+                        onChange={handleInputChange}
+                        value={inputs.reservedFor}
+                        fullWidth
+                        required
+                        type={'number'}
+                      />
+                      <TextField
+                        id="dateTime"
+                        name="dateTime"
+                        label="Date and Time of Dine-in"
+                        className={classes.textField}
+                        type="datetime-local"
+                        onChange={handleInputChange}
+                        value={inputs.dateTime}
+                        fullWidth
+                        required
+                      />
+                        </>
+                    }
+
                 </form>
               )}
             </Grid>

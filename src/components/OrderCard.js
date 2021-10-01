@@ -141,6 +141,9 @@ const OrderCard = (props) => {
         <Typography gutterBottom variant="body1" color="textPrimary">
           Ordered - {dayjs(order.createdAt).fromNow()}
         </Typography>
+        <Typography gutterBottom variant="body1" color="textPrimary">
+          To be delivered by - {`${dayjs(order.dateTime).fromNow()} (${new Date(order.dateTime).toLocaleString()})`}
+        </Typography>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <FiberManualRecordIcon
             disabled

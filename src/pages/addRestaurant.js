@@ -382,7 +382,7 @@ export default function AddRestaurant() {
                     className={classes.small}
                     style={{ marginLeft: "260px" }}
                   >
-                    Partner with Fzoom and scale your business
+                    Partner with Nibba and scale your business
                   </small>
                 </form>
               </Grid>

@@ -56,7 +56,7 @@ const Home = () => {
           <Grid container direction="column">
             <Grid item>
               <Typography variant="h5" className={classes.center} noWrap>
-                Have a seamless restaurant experience with Fzoom!&nbsp;&nbsp;
+                Have a seamless restaurant experience with NibbaFooodds!&nbsp;&nbsp;
                 <span style={{ fontSize: 40 }}>🍽</span>
               </Typography>
             </Grid>

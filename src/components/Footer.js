@@ -78,7 +78,7 @@ export default function Footer() {
         ) : (
           <Grid>
             <Typography variant="h4" component="p">
-              Fzoom for Business
+              Nibba for Business
             </Typography>
             <Typography variant="body1" component="p">
               Get more out of your business, without losing focus on what is
